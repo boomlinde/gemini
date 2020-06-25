@@ -139,13 +139,10 @@ func Untrusted(err error) bool {
 	return errors.As(err, &autherr) || err == UntrustedError
 }
 
-// Untrusted checks whether an error is due to a certificate being expired
-func Expired(err error) bool {
+// Invalid checks whether the error is due to the certificate being invalid
+func Invalid(err error) bool {
 	var invaliderr x509.CertificateInvalidError
-	if errors.As(err, &invaliderr) {
-		return invaliderr.Reason == x509.Expired
-	}
-	return false
+	return errors.As(err, &invaliderr)
 }
 
 // digest calculates an opaque digest string of a certificate chain
