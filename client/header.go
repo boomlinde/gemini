@@ -39,7 +39,7 @@ func GetHeader(r io.Reader) (*Header, error) {
 	// we'll allow for this
 	fspace := strings.IndexByte(h, ' ')
 	ftab := strings.IndexByte(h, '\t')
-	if fspace > ftab || fspace == -1 {
+	if ftab != -1 && ftab < fspace {
 		splitchar = "\t"
 	}
 
