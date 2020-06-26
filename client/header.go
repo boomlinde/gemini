@@ -37,8 +37,11 @@ func GetHeader(r io.Reader) (*Header, error) {
 
 	// some (old?) server software separates code/meta with tab
 	// we'll allow for this
-	fspace := strings.IndexByte(h, ' ')
 	ftab := strings.IndexByte(h, '\t')
+	fspace := strings.IndexByte(h, ' ')
+	if fspace == -1 {
+		fspace = 10000
+	}
 	if ftab != -1 && ftab < fspace {
 		splitchar = "\t"
 	}
