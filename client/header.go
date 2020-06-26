@@ -45,6 +45,11 @@ func GetHeader(r io.Reader) (*Header, error) {
 		return nil, fmt.Errorf("code is not an integer: %w", err)
 	}
 
+	// Empty mime type should default to "text/gemini; charset=utf-8"
+	if code == 20 && fields[1] == "" {
+		fields[1] = "text/gemini; charset=utf-8"
+	}
+
 	return &Header{
 		Code: code,
 		Meta: fields[1],
