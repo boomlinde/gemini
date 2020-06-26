@@ -55,12 +55,24 @@ func Itemize(r io.Reader) ([]Line, error) {
 			line.Type = PreLine
 		} else if strings.HasPrefix(rawline, "=>") {
 			line.Type = LinkLine
-			fields := strings.SplitN(strings.TrimSpace(rawline[2:]), " ", 2)
+
+			l := strings.TrimSpace(rawline[2:])
+			splitchar := " "
+			ftab := strings.IndexByte(l, '\t')
+			fspace := strings.IndexByte(l, ' ')
+			if fspace == -1 {
+				fspace = 10000
+			}
+			if fspace == -1 || (ftab != -1 && ftab < fspace) {
+				splitchar = "\t"
+			}
+
+			fields := strings.SplitN(l, splitchar, 2)
 			if len(fields) == 1 {
 				// Duplicate for display
 				fields = append(fields, fields[0])
 			}
-			line.Link = fields[0]
+			line.Link = strings.TrimSpace(fields[0])
 			line.Display = strings.TrimSpace(fields[1])
 		} else if strings.HasPrefix(rawline, "* ") {
 			line.Type = ListLine

@@ -48,7 +48,7 @@ func TestItemize(t *testing.T) {
 			expectLink:    "gopher://google.com",
 		},
 		tLine{
-			rawtext:       "=> gopher://google.com gopher test!",
+			rawtext:       "=>\t\t\tgopher://google.com\t\t\tgopher test!",
 			expectType:    LinkLine,
 			expectDisplay: "gopher test!",
 			expectLink:    "gopher://google.com",
