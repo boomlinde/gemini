@@ -32,7 +32,18 @@ func GetHeader(r io.Reader) (*Header, error) {
 		}
 	}
 
-	fields := strings.SplitN(strings.TrimSpace(string(headerbytes)), " ", 2)
+	splitchar := " "
+	h := string(headerbytes)
+
+	// some (old?) server software separates code/meta with tab
+	// we'll allow for this
+	fspace := strings.IndexByte(h, ' ')
+	ftab := strings.IndexByte(h, '\t')
+	if fspace > ftab || fspace == -1 {
+		splitchar = "\t"
+	}
+
+	fields := strings.SplitN(strings.TrimSpace(h), splitchar, 2)
 	if len(fields) == 1 {
 		fields = append(fields, "")
 	}
