@@ -13,6 +13,10 @@ import (
 )
 
 // UntrustedError is returned by Request when verification against a pinned certificate signature has failed
+type untrustedError struct{}
+
+func (untrustedError) Error() string { return "untrusted cert signature" }
+
 var UntrustedError error = errors.New("untrusted cert signature")
 
 // TofuStore is an interface to the TOFU storage backend
@@ -59,7 +63,7 @@ func (c *Client) Request(uri string) (io.ReadCloser, error) {
 	verify := func(certs []*x509.Certificate) error {
 		serverSig := digest(certs)
 		if serverSig != signature {
-			return UntrustedError
+			return untrustedError{}
 		}
 		return nil
 	}
@@ -136,7 +140,8 @@ func (c *Client) getcerts(u *url.URL) ([]*x509.Certificate, error) {
 // Untrusted checks whether an error is due to either unknown root CA or failed pin verification
 func Untrusted(err error) bool {
 	var autherr x509.UnknownAuthorityError
-	return errors.As(err, &autherr) || err == UntrustedError
+	var u untrustedError
+	return errors.As(err, &autherr) || errors.As(err, &u)
 }
 
 // Invalid checks whether the error is due to the certificate being invalid
